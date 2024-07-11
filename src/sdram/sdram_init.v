@@ -9,10 +9,16 @@
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
 // Descreption  :   sdram 控制器初始化模块
+//                  Load Mode Register
+//                  CAS Latency      = 3
+//                  Burst Length     = Full
+//                  Burst Type       = Sequential
+//                  Write Burst Mode = Programmed Burst Length
 //
 //============================================================================//
 
 module sdram_init (
+
     input                               clk                 ,
     input                               rstn                ,
 
@@ -42,7 +48,7 @@ localparam      TRF                     =       3'd7                    ;
 localparam      TMRD                    =       3'd3                    ;
 
 localparam      NOP                     =       4'b0111                 ;
-localparam      PRE                     =       4'b0010                 ;
+localparam      PREC                    =       4'b0010                 ;
 localparam      AREF                    =       4'b0001                 ;
 localparam      MRS                     =       4'b0000                 ;
 
@@ -101,6 +107,7 @@ always @(posedge clk or negedge rstn) begin
                 init_state  <=  INIT_IDLE;
     endcase
 end
+// -------------------------------------------------------------------------- //
 
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
@@ -133,9 +140,14 @@ always @( *) begin
     endcase
 end
 
-assign trp_end = (cnt_clk == TRP) ? 1'b1 : 1'b0;
-assign trfc_end = (cnt_clk == TRF) ? 1'b1 : 1'b0;
-assign tmrd_end = (cnt_clk == TMRD) ? 1'b1 : 1'b0;
+assign trp_end =  ((init_state == INIT_TRP)  && 
+                   (cnt_clk == TRP))  ? 1'b1 : 1'b0;
+
+assign trfc_end = ((init_state == INIT_TRF)  && 
+                   (cnt_clk == TRF))  ? 1'b1 : 1'b0;
+                   
+assign tmrd_end = ((init_state == INIT_TMRD) && 
+                   (cnt_clk == TMRD)) ? 1'b1 : 1'b0;
 
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
@@ -163,7 +175,7 @@ always @(posedge clk or negedge rstn) begin
             end
         INIT_PRE :
             begin
-                init_cmd    <=      PRE;
+                init_cmd    <=      PREC;
                 init_bank   <=      2'b11;
                 init_addr   <=      13'h1fff;
             end
