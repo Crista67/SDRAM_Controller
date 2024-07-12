@@ -4,13 +4,13 @@
 // ****************************** Informations ****************************** //
 //============================================================================//
 // Auther       :   Crista Y.Z.Li 
-// Module name  :   tb_sdram_init
+// Module name  :   tb_sdram_aref
 // Project name :   sdram_controller 
 // Device       :   Intel Altera EP4CE10F17C8
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器初始化模块 testbench 仿真文件
+// Descreption  :   sdram 控制器自动刷新模块 testbench 仿真文件
 //
 //============================================================================//
 
