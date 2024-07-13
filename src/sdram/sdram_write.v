@@ -143,7 +143,7 @@ always @(posedge clk or negedge rstn) begin
         wr_sdram_addr   <=      13'h1fff;
     end
     else case (wr_state)
-        WR_IDLE,WR_TRCD,WR_TRP,WR_END :
+        WR_IDLE,WR_TRCD,WR_TRP :
             begin
                 wr_sdram_cmd    <=      NOP;
                 wr_sdram_bank   <=      2'b11;
