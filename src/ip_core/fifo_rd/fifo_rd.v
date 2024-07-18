@@ -4,7 +4,7 @@
 // MODULE: scfifo 
 
 // ============================================================
-// File Name: fifo_read.v
+// File Name: fifo_rd.v
 // Megafunction Name(s):
 // 			scfifo
 //
@@ -36,7 +36,7 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module fifo_read (
+module fifo_rd (
 	clock,
 	data,
 	rdreq,
@@ -143,10 +143,10 @@ endmodule
 // Retrieval info: CONNECT: @wrreq 0 0 0 0 wrreq 0 0 0 0
 // Retrieval info: CONNECT: q 0 0 8 0 @q 0 0 8 0
 // Retrieval info: CONNECT: usedw 0 0 10 0 @usedw 0 0 10 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read.bsf FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read_inst.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_read_bb.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd_inst.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL fifo_rd_bb.v FALSE
 // Retrieval info: LIB_FILE: altera_mf
