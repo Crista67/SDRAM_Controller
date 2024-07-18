@@ -155,7 +155,7 @@ always @(posedge clk or negedge rstn) begin
         wr_en       <=      1'b0;
     else if ((state == ARBIT) && (aref_req == 1'b0) && (wr_req == 1'b1))
         wr_en       <=      1'b1;
-    else if (aref_end == 1'b1)
+    else if (wr_end == 1'b1)
         wr_en       <=      1'b0;
 end
 
@@ -164,7 +164,7 @@ always @(posedge clk or negedge rstn) begin
         rd_en       <=      1'b0;
     else if ((state == ARBIT) && (aref_req == 1'b0) && (rd_req == 1'b1))
         rd_en       <=      1'b1;
-    else if (aref_end == 1'b1)
+    else if (rd_end == 1'b1)
         rd_en       <=      1'b0;
 end
 

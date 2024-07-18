@@ -46,10 +46,10 @@ localparam      RD_TRP                  =       4'b0100                 ;
 localparam      RD_END                  =       4'b1100                 ;
 
 
-localparam      TRCD                    =       'd2                     ;
-localparam      TRD                     =       'd2                     ;
-localparam      TCL                     =       'd3                     ;
-localparam      TRP                     =       'd2                     ;
+localparam      TRCD                    =       2'd2                     ;
+localparam      TRD                     =       2'd2                     ;
+localparam      TCL                     =       2'd3                     ;
+localparam      TRP                     =       2'd2                     ;
 
 localparam      NOP                     =       4'b0111                 ;
 localparam      ACT                     =       4'b0011                 ;

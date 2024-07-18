@@ -123,10 +123,14 @@ always @(posedge clk or negedge rstn) begin
             sdram_wr_req        <=      1'b0;
             sdram_rd_req        <=      1'b1;
         end
+        else begin
+            sdram_wr_req        <=      1'b0;
+            sdram_rd_req        <=      1'b0;
+        end
     end
     else begin
         sdram_wr_req        <=      1'b0;
-        sdram_rd_req        <=      1'b1;
+        sdram_rd_req        <=      1'b0;
     end
 end
 
@@ -147,18 +151,20 @@ fifo_data	wr_fifo_data_inst (
 
 fifo_data	rd_fifo_data_inst (
                 // user interface
-                .rdclk                  (clk            ),
-                .rdreq                  (sdram_rd_ack   ),
-                .q                      (sdram_rd_data  ),
+                .rdclk                  (rd_fifo_rd_clk ),
+                .rdreq                  (rd_fifo_rd_req ),
+                .q                      (rd_fifo_rd_data),
                 // sdram interface
-                .wrclk                  (rd_fifo_rd_clk ),
-                .wrreq                  (rd_fifo_rd_req ),
-                .data                   (rd_fifo_rd_data),
+                .wrclk                  (clk            ),
+                .wrreq                  (sdram_rd_ack   ),
+                .data                   (sdram_rd_data  ),
 
-                .aclr                   (wr_rst || ~rstn),
+                .aclr                   (rd_rst || ~rstn),
                 .rdusedw                (               ),
                 .wrusedw                (rd_fifo_num    )
 );
 
 
 endmodule //fifo_ctrl
+
+
