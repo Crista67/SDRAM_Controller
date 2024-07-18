@@ -1,6 +1,6 @@
 # SDRAM Controller
 
-基于 Intel Altera EP4CE10F17C8 设计
+基于 Intel Altera EP4CE10F17C8 设计，被控芯片为 Winbond W9825G6KH-6 SDR SDRAM 芯片. 
 
 ## sdram控制器
 
@@ -65,3 +65,23 @@ fifo读写控制模块，用于在数据写入 sdram 前或读出 sdram 后的�
 ### 8. sdram_top
 
 sdram 控制器顶层模块，连接 fifo 读写控制和 sdram 控制模块
+
+## sdram 控制器外部模块
+
+### 1. clk_gen
+
+从quartus 调用的 PLL ip核，用于生成不同频率和相位的时钟信号，供各个模块使用. 
+
+### 2. uart_rx 和 uart_tx
+
+基于 rs232 协议设计，用于 sdram 控制器和上位机的通信.
+
+设置串口波特率为 9600，传输数据位宽为 8 位，无校验位.
+
+### 3. fifo_read
+
+利用 fifo 将从 sdram 中读取的数据进行缓存，以便通过 uart 传输到外部.
+
+### 4. uart_sdram
+
+工程的顶层模块，实现了全部工程模块的例化和连接.
