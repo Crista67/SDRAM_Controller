@@ -846,7 +846,7 @@ module sdram_model_plus (Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm,D
             if (Dqm == 4'b1111) begin
                 if (Debug) $display("at time %t WRITE: Bank = %d Row = %d, Col = %d, Data = Hi-Z due to DQM", $time, Bank, Row, Col);
             end else begin
-                if (Debug) $display("at time %t WRITE: Bank = %d Row = %d, Col = %d, Data = %d, Dqm = %b", $time, Bank, Row, Col, Dq_dqm, Dqm);
+                if (Debug) $display("at time %t WRITE: Bank = %d Row = %d, Col = %d, Data = %h, Dqm = %b", $time, Bank, Row, Col, Dq_dqm, Dqm);
                 // Record tWR time and reset counter
                 WR_chk [Bank] = $time;
                 WR_counter [Bank] = 0;
@@ -871,7 +871,7 @@ module sdram_model_plus (Dq, Addr, Ba, Clk, Cke, Cs_n, Ras_n, Cas_n, We_n, Dqm,D
             if (Dqm_reg0 == 4'b1111) begin
                 if (Debug) $display("at time %t READ : Bank = %d Row = %d, Col = %d, Data = Hi-Z due to DQM", $time, Bank, Row, Col);
             end else begin
-                if (Debug) $display("at time %t READ : Bank = %d Row = %d, Col = %d, Data = %d, Dqm = %b", $time, Bank, Row, Col, Dq_reg, Dqm_reg0);
+                if (Debug) $display("at time %t READ : Bank = %d Row = %d, Col = %d, Data = %h, Dqm = %b", $time, Bank, Row, Col, Dq_reg, Dqm_reg0);
             end
             // Advance burst counter subroutine
             Burst;
