@@ -25,6 +25,8 @@ module sdram_ctrl (
     input                               rd_req              ,
     input           [23:0]              rd_addr             ,
     input           [9:0]               rd_burst_len        ,
+    // init module output signals
+    output  wire                        init_end            , 
     // write module output signals
     output  wire                        wr_ack              ,
     // read module output signals
@@ -48,7 +50,6 @@ module sdram_ctrl (
 wire                [3:0]                       init_cmd                ;
 wire                [1:0]                       init_bank               ;
 wire                [12:0]                      init_addr               ;
-wire                                            init_end                ;
 // aref
 wire                                            aref_en                 ;
 wire                                            aref_req                ;
