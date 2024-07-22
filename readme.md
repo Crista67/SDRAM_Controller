@@ -1,87 +1,87 @@
 # SDRAM Controller
 
-基于 Intel Altera EP4CE10F17C8 设计，被控芯片为 Winbond W9825G6KH-6 SDR SDRAM 芯片. 
+Designed based on Intel Altera EP4CE10F17C8, with the controlled chip being the Winbond W9825G6KH-6 SDR SDRAM chip.
 
-## sdram控制器
+## 1. Internal Modules of the SDRAM Controller
 
-### 1. sdram_init
+### (1) sdram_init
 
-用于对 sdram 进行初始化操作.
+Used for initializing the SDRAM.
 
-参照硬件数据手册，sdram 芯片上电后须等待 $ 200 \mu s$；随后进行预充电 (Precharge) 指令；预充电完成后需要进行 8 次自动刷新 (Auto-Refresh), 在此期间完成模式寄存器配置 (Mode Register Set).
+According to the hardware datasheet, after powering up the SDRAM chip, it needs to wait for $200 \mu s$; then perform the Precharge command; after precharge, 8 Auto-Refresh operations need to be performed, during which the Mode Register Set is configured.
 
-### 2. sdram_aref
+### (2) sdram_aref
 
-用于 sdram 的定时自动刷新.
+Used for periodic automatic refresh of the SDRAM.
 
-芯片每个 bank 共有 8192 行，按照要求需要每 64ms 需要刷新 8192 次；因此刷新周期不得大于 $7.8125 \mu s$.
+Each bank of the chip has 8192 rows, and it needs to be refreshed 8192 times every 64ms; therefore, the refresh cycle must not exceed $7.8125 \mu s$.
 
-考虑到实际可能存在的延时，为保证刷新能够正常工作，设置刷新周期为 $7.5\mu s$, 即 750 个时钟周期.
+Considering possible delays in practice, to ensure proper refresh operation, the refresh cycle is set to $7.5 \mu s$, which is 750 clock cycles.
 
-刷新操作每 $7.5 \mu s$ 进行一次，每次须先进行预充电 (Precharge) 操作，随后进行两次自动刷新 (Auto-Refresh) 操作.
+The refresh operation is performed once every $7.5 \mu s$. Each time, a precharge operation is performed first, followed by two Auto-Refresh operations.
 
-刷新操作在初始化完成后开始计时，并在计时达到最大值后向仲裁模块发出请求，收到仲裁模块的使能信号后开始刷新操作.
+The refresh operation starts timing after initialization is completed, and requests are sent to the arbitration module when the timing reaches the maximum value. After receiving the enable signal from the arbitration module, the refresh operation begins.
 
-### 3. sdram_write
+### (3) sdram_write
 
-用于向 sdram 中写入数据.
+Used to write data into the SDRAM.
 
-传入模块的信号包括写入地址、待写入数据和突发长度.
+Signals passed to the module include write address, data to be written, and burst length.
 
-写入突发设置为页突发，但也可以通过设置突发长度，以使数据在不满整页时提前结束突发.
+The write burst is set to page burst, but the burst length can also be set to end the burst early if the data does not fill the entire page.
 
-写入地址共24位，按先后顺序包括写入数据存储的 bank 地址 2 位、行地址 13 位、列地址 9 位.
+The write address is 24 bits, including 2 bits for the bank address, 13 bits for the row address, and 9 bits for the column address.
 
-### 4. sdram_read
+### (4) sdram_read
 
-用于读取 sdram 中的数据.
+Used to read data from the SDRAM.
 
-传入信号包括读取地址、读使能和突发长度.
+Signals passed include read address, read enable, and burst length.
 
-与写入模块不同的是，读取时需要手动传入读使能信号，而写使能信号是由上层模块自行发出的.
+Unlike the write module, the read enable signal needs to be manually provided, while the write enable signal is issued by the upper module.
 
-与写模块基本相同，读取模块也设置为页突发模式，突发长度和读取地址的设置也和读模块基本一致.
+The read module is also set to page burst mode, with burst length and read address settings similar to the write module.
 
-### 5. sdram_arbit
+### (5) sdram_arbit
 
-由于安排初始化、刷新、读、写模块的时序和优先级.
+Arranges the timing and priority of initialization, refresh, read, and write modules.
 
-在控制器启动时，自动执行初始化操作，初始化完成信号传出后，仲裁模块开始工作；
+Upon controller startup, initialization is automatically performed, and after the initialization completion signal is sent out, the arbitration module starts working.
 
-按照模块设置，刷新模块处于最高的优先级，因此当请求信号同时传入时，优先进入刷新模块进行刷新操作.
+According to module settings, the refresh module has the highest priority. Therefore, when request signals are simultaneously received, the refresh module is entered first for refresh operations.
 
-写模块处于第二优先级，读模块处于第三优先级.
+The write module has the second priority, and the read module has the third priority.
 
-当一个模块正在工作时，此时若有其他模块的请求信号传入，正在工作的模块不会跳出，而是保持请求信号拉高，直至当前模块退出工作，随后进入发出请求的模块；此时的冲突仍遵循上述的优先级安排.
+When a module is working, if request signals from other modules are received, the working module will not exit but keep the request signal high until the current module exits, then enter the requesting module. Conflicts at this time still follow the priority arrangement mentioned above.
 
-### 6. sdram_ctrl
+### (6) sdram_ctrl
 
-sdram 控制模块，仲裁、初始化、读、写、自动刷新模块的顶层模块.
+SDRAM control module, the top module of arbitration, initialization, read, write, and automatic refresh modules.
 
-### 7. fifo_ctrl
+### (7) fifo_ctrl
 
-fifo读写控制模块，用于在数据写入 sdram 前或读出 sdram 后的缓存，保证数据的跨时钟域传输和等待.
+FIFO read/write control module, used for buffering data before writing to SDRAM or after reading from SDRAM, ensuring data transfer across clock domains and waiting.
 
-### 8. sdram_top
+### (8) sdram_top
 
-sdram 控制器顶层模块，连接 fifo 读写控制和 sdram 控制模块
+Top module of the SDRAM controller, connecting the FIFO read/write control and SDRAM control modules.
 
-## sdram 控制器外部模块
+## 2. External Modules of the SDRAM Controller
 
-### 1. clk_gen
+### (1) clk_gen
 
-从quartus 调用的 PLL ip核，用于生成不同频率和相位的时钟信号，供各个模块使用. 
+PLL IP core called from Quartus, used to generate clock signals of different frequencies and phases for use by various modules.
 
-### 2. uart_rx 和 uart_tx
+### (2) uart_rx and uart_tx
 
-基于 rs232 协议设计，用于 sdram 控制器和上位机的通信.
+Designed based on the RS232 protocol, used for communication between the SDRAM controller and the host computer.
 
-设置串口波特率为 9600，传输数据位宽为 8 位，无校验位.
+The UART baud rate is set to 9600, with 8-bit data width and no parity bit.
 
-### 3. fifo_read
+### (3) fifo_read
 
-利用 fifo 将从 sdram 中读取的数据进行缓存，以便通过 uart 传输到外部.
+Uses FIFO to buffer data read from SDRAM for transmission to the external device via UART.
 
-### 4. uart_sdram
+### (4) uart_sdram
 
-工程的顶层模块，实现了全部工程模块的例化和连接.
+Top module of the project, implementing instantiation and connection of all project modules.
