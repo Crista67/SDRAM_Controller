@@ -8,7 +8,7 @@
 // Device       :   Intel Altera EP4CE10F17C8 
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   uart_rx
+// Descreption  :   UART Communication Receiver Module
 //
 //============================================================================//
 module uart_rx #(
@@ -42,6 +42,7 @@ reg                                             rx_flag                 ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
+// delay 3 times and capture the falling edge of the start bit
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         rx_reg1 <= 1'b1;
@@ -71,7 +72,7 @@ always @(posedge clk or negedge rstn) begin
     else
         start_nedge <= 1'b0;
 end
-
+// Generate the working enable signal.
 always @(posedge clk or negedge rstn) begin
     if(rstn == 1'b0)
         work_en <= 1'b0;
@@ -80,7 +81,7 @@ always @(posedge clk or negedge rstn) begin
     else    if((bit_cnt == 4'd8) && (bit_flag == 1'b1))
         work_en <= 1'b0;
 end
-
+// counters for baud rate 9600, 8 bit data
 always @(posedge clk or negedge rstn) begin
     if(rstn == 1'b0)
         baud_cnt <= 13'b0;
@@ -107,7 +108,7 @@ always @(posedge clk or negedge rstn) begin
     else if(bit_flag ==1'b1)
          bit_cnt <= bit_cnt + 1'b1;
 end
-
+// Shift Register
 always @(posedge clk or negedge rstn) begin
     if(rstn == 1'b0)
         rx_data <= 8'b0;

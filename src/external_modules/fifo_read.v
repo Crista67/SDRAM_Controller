@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器 fifo 读模块
+// Descreption  :   SDRAM Controller FIFO Read Module
 //
 //============================================================================//
 
@@ -21,12 +21,13 @@ module fifo_read (
 
     output  reg                         rd_en               , 
     output  reg                         tx_flag             ,
-    output  wire    [7:0]     tx_data              
+    output  wire    [7:0]               tx_data              
 );
 
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
+// parameters of baud rate counter
 parameter       BAUD_MAX                =       13'd5207                ;
 parameter       BAUD_MID                =       13'd2603                ;
 parameter       CNT_WAIT_MAX            =       24'd4_999_999           ;
@@ -44,7 +45,7 @@ reg                                             bit_flag                ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// read enable signal and delay
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         rd_en       <=      1'b0;
@@ -60,7 +61,7 @@ always @(posedge clk or negedge rstn) begin
     else
         rd_en1      <=      rd_en;
 end
-
+// read flag
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         rd_flag     <=      1'b0;
@@ -69,7 +70,7 @@ always @(posedge clk or negedge rstn) begin
     else if (data_num == burst_num)
         rd_flag     <=      1'b1;
 end
-
+// baud rate 9600 8 bit data
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         baud_cnt        <=      13'd0;
@@ -96,7 +97,7 @@ always @(posedge clk or negedge rstn) begin
     else if (bit_flag == 1'b1)
         bit_cnt     <=      bit_cnt + 1'b1;
 end
-
+// enable signal of read fifo
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         read_fifo_en        <=      1'b0;
@@ -105,7 +106,7 @@ always @(posedge clk or negedge rstn) begin
     else
         read_fifo_en        <=      1'b0;
 end
-
+// counter for a burst
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_read        <=      10'd0;

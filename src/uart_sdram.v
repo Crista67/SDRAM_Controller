@@ -7,7 +7,7 @@
 // Device       :   Intel Altera EP4CE10F17C8
 // Tool Version :   Quartus Prime 18.0
 //                  ModelsimSE-64 2020.4
-// Descreption  :   rs232 & sdram controller 顶层模块
+// Descreption  :   SDRAM Controller Top Module with RS232
 //
 //============================================================================//
 module uart_sdram (
@@ -57,7 +57,7 @@ wire                                            rd_fifo_rd_en           ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// generate different clocks
 clk_gen	clk_gen_inst (
                 .areset                 (~s_rstn        ),
                 .inclk0                 (s_clk          ),
@@ -68,7 +68,7 @@ clk_gen	clk_gen_inst (
 );
 
 assign rstn = s_rstn & locked;
-
+// uart receiver
 uart_rx # (
                 .UART_BPS               (UART_BPS       ),
                 .CLK_FREQ               (CLK_FREQ       )
@@ -80,7 +80,7 @@ uart_rx # (
                 .po_data                (rx_data        ),
                 .po_flag                (rx_flag        )
   );
-
+// read signal
 always @(posedge clk_50m or negedge s_rstn) begin
     if (s_rstn == 1'b0)
         cnt_wait        <=      16'd0;
@@ -111,7 +111,6 @@ always @(posedge clk_50m or negedge s_rstn) begin
 end
 
 sdram_top  sdram_top_inst (
-    // Assign values to wr_rst and rd_rst as ~rstn while simulating
                 .clk                    (clk_100m       ),
                 .rstn                   (rstn           ),
                 .clk_out                (clk_100m_s     ),
@@ -145,7 +144,7 @@ sdram_top  sdram_top_inst (
                 .sdram_dqm              (sdram_dqm      ),
                 .sdram_dq               (sdram_dq       )
 );
-
+// read fifo
 fifo_read   fifo_read_inst (
                 .clk                    (clk_50m        ),
                 .rstn                   (s_rstn         ),
@@ -157,7 +156,7 @@ fifo_read   fifo_read_inst (
                 .tx_flag                (rd_fifo_rd_en  ),
                 .tx_data                (rd_fifo_rd_data)
 );
-
+// uart transmitter
 uart_tx # (
                 .UART_BPS               (UART_BPS       ),
                 .CLK_FREQ               (CLK_FREQ       )

@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器初始化模块
+// Descreption  :   SDRAM Controller Initialization Module
 //                  Load Mode Register
 //                  CAS Latency      = 3
 //                  Burst Length     = Full
@@ -32,7 +32,7 @@ module sdram_init (
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
-
+// States of State Machine
 localparam      INIT_IDLE               =       3'b000                  ;
 localparam      INIT_PRE                =       3'b001                  ;
 localparam      INIT_TRP                =       3'b011                  ;
@@ -42,21 +42,23 @@ localparam      INIT_MRS                =       3'b111                  ;
 localparam      INIT_TMRD               =       3'b101                  ;
 localparam      INIT_END                =       3'b100                  ;
 
-localparam      WAIT_MAX                =       15'd20_000              ;
+// Maximum Timer Delay Value
+localparam      WAIT_MAX                =       15'd20_000              ; // wait 200 us
 localparam      TRP                     =       3'd2                    ;
 localparam      TRF                     =       3'd7                    ;
 localparam      TMRD                    =       3'd3                    ;
-
+// Commands Required in the Initialization Module
 localparam      NOP                     =       4'b0111                 ;
 localparam      PREC                    =       4'b0010                 ;
 localparam      AREF                    =       4'b0001                 ;
 localparam      MRS                     =       4'b0000                 ;
 
-
+// Flag signal of Counter's End
 wire                                            wait_end                ;
 wire                                            trp_end                 ;
 wire                                            trfc_end                ;
 wire                                            tmrd_end                ;
+// rInternal Registers
 reg                 [2:0]                       init_state              ;
 reg                 [14:0]                      cnt_200us               ;
 reg                 [2:0]                       cnt_clk                 ;
@@ -108,7 +110,7 @@ always @(posedge clk or negedge rstn) begin
     endcase
 end
 // -------------------------------------------------------------------------- //
-
+// wait for 200us
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_200us   <=  15'd0;
@@ -117,9 +119,9 @@ always @(posedge clk or negedge rstn) begin
     else
         cnt_200us   <=  cnt_200us + 1'b1;
 end
-
+// wait flag
 assign wait_end =   (cnt_200us == (WAIT_MAX - 1'b1)) ? 1'b1 : 1'b0;
-
+// cnt_clk
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_clk     <=  3'd0;
@@ -128,7 +130,7 @@ always @(posedge clk or negedge rstn) begin
     else
         cnt_clk     <=  cnt_clk + 1'b1;
 end
-
+// counter reset signal
 always @( *) begin
     case (init_state)
         INIT_IDLE : cnt_clk_rst     <=  1'b1;
@@ -148,7 +150,7 @@ assign trfc_end = ((init_state == INIT_TRF)  &&
                    
 assign tmrd_end = ((init_state == INIT_TMRD) && 
                    (cnt_clk == TMRD)) ? 1'b1 : 1'b0;
-
+// counter of auto-refresh
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_aref    <=  4'd0;
@@ -159,7 +161,7 @@ always @(posedge clk or negedge rstn) begin
     else 
         cnt_aref    <=  cnt_aref;
 end
-
+// commands for each state
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0) begin
         init_cmd    <=      NOP;
@@ -200,7 +202,7 @@ always @(posedge clk or negedge rstn) begin
             end
     endcase
 end
-
+// end flag
 assign init_end = (init_state == INIT_END) ? 1'b1 : 1'b0;
 
 endmodule //sdram_init

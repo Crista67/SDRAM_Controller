@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器读模块
+// Descreption  :   SDRAM Controller Read Module
 //
 //============================================================================//
 
@@ -33,8 +33,7 @@ module sdram_read (
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
-
-
+// states of State Machine
 localparam      RD_IDLE                 =       4'b0000                 ;
 localparam      RD_ACT                  =       4'b0001                 ;
 localparam      RD_TRCD                 =       4'b0011                 ;
@@ -44,13 +43,12 @@ localparam      RD_DATA                 =       4'b0111                 ;
 localparam      RD_PREC                 =       4'b0101                 ;
 localparam      RD_TRP                  =       4'b0100                 ;
 localparam      RD_END                  =       4'b1100                 ;
-
-
-localparam      TRCD                    =       2'd2                     ;
-localparam      TRD                     =       2'd2                     ;
-localparam      TCL                     =       2'd3                     ;
-localparam      TRP                     =       2'd2                     ;
-
+// Maximum Timer Delay Value
+localparam      TRCD                    =       2'd2                    ;
+localparam      TRD                     =       2'd2                    ;
+localparam      TCL                     =       2'd3                    ;
+localparam      TRP                     =       2'd2                    ;
+// Commands
 localparam      NOP                     =       4'b0111                 ;
 localparam      ACT                     =       4'b0011                 ;
 localparam      PREC                    =       4'b0010                 ;
@@ -71,14 +69,14 @@ reg                                             cnt_clk_rst             ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// read data register
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         rd_sdram_data_reg       <=      16'd0;
     else
         rd_sdram_data_reg       <=      rd_sdram_data;
 end
-
+// ----------------------------- state machine ------------------------------ //
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         rd_state        <=      RD_IDLE;
@@ -120,7 +118,8 @@ always @(posedge clk or negedge rstn) begin
             rd_state        <=      rd_state;
     endcase
 end
-
+// -------------------------------------------------------------------------- //
+// counter reset signal
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_clk     <=  10'd0;
@@ -166,7 +165,7 @@ assign rd_ack = ((rd_state == RD_DATA) &&
                  (cnt_clk <= rd_burst_len)) ? 1'b1 : 1'b0;
 
 assign rd_end = (rd_state == RD_END) ? 1'b1 : 1'b0;
-
+// Commands
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0) begin
         rd_sdram_cmd    <=      NOP;
@@ -220,7 +219,7 @@ always @(posedge clk or negedge rstn) begin
             end
     endcase
 end
-
+// output data
 assign rd_data = (rd_ack == 1'b1) ? rd_sdram_data_reg : 16'd0;
 
 endmodule //sdram_read

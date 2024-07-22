@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器 fifo 控制模块
+// Descreption  :   SDRAM Controller FIFO Control Module
 //
 //============================================================================//
 
@@ -65,7 +65,7 @@ reg                                             sdram_rd_ack1           ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// catch negedge of ack signals
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         sdram_wr_ack1       <=      1'b0;
@@ -82,7 +82,7 @@ end
 
 assign sdram_wr_ack_ne = (sdram_wr_ack1 & ~sdram_wr_ack);
 assign sdram_rd_ack_ne = (sdram_rd_ack1 & ~sdram_rd_ack);
-
+// Allocate read and write addresses
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         sdram_wr_addr       <=      24'd0;
@@ -108,7 +108,7 @@ always @(posedge clk or negedge rstn) begin
             sdram_rd_addr      <=      sdram_rd_b_addr;
     end
 end
-
+// Generate request signal
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0) begin
         sdram_wr_req        <=      1'b0;
@@ -133,7 +133,7 @@ always @(posedge clk or negedge rstn) begin
         sdram_rd_req        <=      1'b0;
     end
 end
-
+// write fifo and read fifo
 fifo_data	wr_fifo_data_inst (
                 // user interface
                 .wrclk                  (wr_fifo_wr_clk ),

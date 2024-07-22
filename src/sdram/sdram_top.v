@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器顶层模块
+// Descreption  :   SDRAM Controller Top Module
 //
 //============================================================================//
 

@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器仲裁模块
+// Descreption  :   SDRAM Controller Arbitration Module
 //
 //============================================================================//
 module sdram_arbit (
@@ -58,12 +58,13 @@ module sdram_arbit (
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
+// states of State Machine
 localparam      IDLE                    =       5'b0_0001               ;
 localparam      ARBIT                   =       5'b0_0010               ;
 localparam      AREF                    =       5'b0_0100               ;
 localparam      WRITE                   =       5'b0_1000               ;
 localparam      READ                    =       5'b1_0000               ;
-
+// Command
 localparam      NOP                     =       4'b0111                 ;
 
 reg                 [4:0]                       state                   ;
@@ -72,7 +73,7 @@ reg                 [3:0]                       sdram_cmd               ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// ----------------------------- state machine ------------------------------ //
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         state       <=      IDLE;
@@ -110,7 +111,8 @@ always @(posedge clk or negedge rstn) begin
                 state       <=      IDLE;
     endcase
 end
-
+// -------------------------------------------------------------------------- //
+// Commands
 always @( *) begin
     case (state)
         IDLE  : begin
@@ -140,7 +142,7 @@ always @( *) begin
         end
     endcase
 end
-
+// enable signals
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         aref_en     <=      1'b0;
@@ -168,6 +170,7 @@ always @(posedge clk or negedge rstn) begin
         rd_en       <=      1'b0;
 end
 
+// Interface connected to the SDRAM chip
 assign {sdram_cs_n, sdram_ras_n, sdram_cas_n, sdram_we_n} = sdram_cmd;
 
 assign sdram_cke = 1'b1;

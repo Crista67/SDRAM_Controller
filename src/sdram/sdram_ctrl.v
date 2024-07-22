@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器控制模块
+// Descreption  :   SDRAM Controller Control Module
 //
 //============================================================================//
 
@@ -46,18 +46,18 @@ module sdram_ctrl (
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
-// init
+// Initialiation
 wire                [3:0]                       init_cmd                ;
 wire                [1:0]                       init_bank               ;
 wire                [12:0]                      init_addr               ;
-// aref
+// Auto-refresh
 wire                                            aref_en                 ;
 wire                                            aref_req                ;
 wire                                            aref_end                ;
 wire                [3:0]                       aref_cmd                ;
 wire                [1:0]                       aref_bank               ;
 wire                [12:0]                      aref_addr               ;
-// write
+// Write
 wire                                            wr_en                   ;
 wire                                            wr_end                  ;
 wire                                            wr_sdram_en             ;
@@ -65,7 +65,7 @@ wire                [3:0]                       wr_sdram_cmd            ;
 wire                [1:0]                       wr_sdram_bank           ;
 wire                [12:0]                      wr_sdram_addr           ;
 wire                [15:0]                      wr_sdram_data           ;
-// read
+// Read
 wire                                            rd_en                   ;
 wire                                            rd_end                  ;
 wire                [3:0]                       rd_sdram_cmd            ;

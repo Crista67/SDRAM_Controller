@@ -10,7 +10,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器读模块 testbench 仿真文件
+// Descreption  :   Testbench File for SDRAM Controller Read Module
 //
 //============================================================================//
 

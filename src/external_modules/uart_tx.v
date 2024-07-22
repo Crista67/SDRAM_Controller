@@ -8,7 +8,7 @@
 // Device       :   Intel Altera EP4CE10F17C8
 // Tool Version :   Quartus Prime 18.0
 //                  ModelsimSE-64 2020.4
-// Descreption  :   uart_tx
+// Descreption  :   UART Communication Transmitter Module
 //
 //============================================================================//
 module uart_tx #(
@@ -37,6 +37,7 @@ reg                                             work_en                 ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
+// working enable signal
 always@(posedge clk or negedge rstn) begin
     if(rstn == 1'b0)
         work_en     <=      1'b0;
@@ -45,7 +46,7 @@ always@(posedge clk or negedge rstn) begin
     else if((bit_flag == 1'b1) && (bit_cnt == 4'd9))
         work_en     <=      1'b0;
 end
-
+// baud rate 9600, 8 bit data
 always@(posedge clk or negedge rstn) begin
     if(rstn == 1'b0)
         baud_cnt        <=      13'b0;
@@ -73,6 +74,7 @@ always @(posedge clk or negedge rstn) begin
         bit_cnt     <=      bit_cnt + 1'b1;
 end
 
+// Serial Output Data
 always@(posedge clk or negedge rstn) begin
         if(rstn == 1'b0)
             rs232_tx    <=      1'b1; //空闲状态时为高电平

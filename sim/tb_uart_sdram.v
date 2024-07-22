@@ -8,7 +8,7 @@
 // Device       :   Intel Altera EP4CE10F17C8
 // Tool Version :   Quartus Prime 18.0
 //                  ModelsimSE-64 2020.4
-// Descreption  :   rs232 & sdram controller 顶层模块 testbench 仿真文件
+// Descreption  :   Testbench File for SDRAM Controller with UART Communication
 //
 //============================================================================//
 

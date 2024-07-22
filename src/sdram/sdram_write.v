@@ -8,7 +8,7 @@
 //                  winbond W9825G6KH-6
 // Tool Version :   Quartus Prime 18.0 
 //                  ModelsimSE-64 2020.4
-// Descreption  :   sdram 控制器写模块
+// Descreption  :   SDRAM Controller Write Module
 //
 //============================================================================//
 
@@ -35,7 +35,7 @@ module sdram_write (
 //============================================================================//
 // ********************* parameters & Internal Signals ********************** //
 //============================================================================//
-
+// states of State Machine
 localparam      WR_IDLE                 =       3'b000                  ;
 localparam      WR_ACT                  =       3'b001                  ;
 localparam      WR_TRCD                 =       3'b011                  ;
@@ -44,10 +44,10 @@ localparam      WR_DATA                 =       3'b110                  ;
 localparam      WR_PREC                 =       3'b111                  ;
 localparam      WR_TRP                  =       3'b101                  ;
 localparam      WR_END                  =       3'b100                  ;
-
+// Maximum Timer Delay Value
 localparam      TRCD                    =       'd2                     ;
 localparam      TRP                     =       'd2                     ;
-
+// Commands
 localparam      NOP                     =       4'b0111                 ;
 localparam      ACT                     =       4'b0011                 ;
 localparam      PREC                    =       4'b0010                 ;
@@ -64,7 +64,7 @@ reg                                             cnt_clk_rst             ;
 //============================================================================//
 // ******************************* Main Code ******************************** //
 //============================================================================//
-
+// ----------------------------- state machine ------------------------------ //
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         wr_state        <=      WR_IDLE;
@@ -101,7 +101,7 @@ always @(posedge clk or negedge rstn) begin
             wr_state        <=      wr_state;
     endcase
 end
-
+// -------------------------------------------------------------------------- //
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         cnt_clk     <=  10'd0;
@@ -110,7 +110,7 @@ always @(posedge clk or negedge rstn) begin
     else
         cnt_clk     <=  cnt_clk + 1'b1;
 end
-
+// counter reset signal
 always @( *) begin
     case (wr_state)
         WR_IDLE : cnt_clk_rst   <=  1'b1;
@@ -135,7 +135,7 @@ assign trp_end  = ((wr_state == WR_TRP) &&
 assign wr_ack = ((wr_state == WR_WRI) || 
                  ((wr_state == WR_DATA) && (cnt_clk <= (wr_burst_len - 2))))
                  ? 1'b1 : 1'b0 ;               
-
+// Commands
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0) begin
         wr_sdram_cmd    <=      NOP;
@@ -189,16 +189,16 @@ always @(posedge clk or negedge rstn) begin
             end
     endcase
 end
-
+// write enable
 always @(posedge clk or negedge rstn) begin
     if (rstn == 1'b0)
         wr_sdram_en     <=      1'd0;
     else 
         wr_sdram_en     <=      wr_ack;
 end
-
+// output data
 assign wr_sdram_data = (wr_sdram_en == 1'b1) ? wr_data : 16'd0;
-
+// end flag
 assign wr_end = (wr_state == WR_END) ? 1'b1 : 1'b0;
 
 
