@@ -14,7 +14,7 @@ According to the hardware datasheet, after powering up the SDRAM chip, it needs 
 
 Used for periodic automatic refresh of the SDRAM.
 
-Each bank of the chip has 8192 rows, and it needs to be refreshed 8192 times every 64ms; therefore, the refresh cycle must not exceed $7.8125 \mu s$.
+Each bank of the chip has 8192 rows, and it needs to be refreshed 8192 times every $64ms$; therefore, the refresh cycle must not exceed $7.8125 \mu s$.
 
 Considering possible delays in practice, to ensure proper refresh operation, the refresh cycle is set to $7.5 \mu s$, which is 750 clock cycles.
 
